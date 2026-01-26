@@ -2,8 +2,8 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import permission_required
 
 @permission_required("bookshelf.can_view", raise_exception=True)
-def view_books(request):
-    return render(request, "bookshelf/view_books.html")
+def book_list(request):
+    return render(request, "bookshelf/book_list.html")
 
 @permission_required("bookshelf.can_create", raise_exception=True)
 def create_book(request):
