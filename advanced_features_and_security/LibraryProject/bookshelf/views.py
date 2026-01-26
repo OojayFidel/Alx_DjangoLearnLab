@@ -19,7 +19,7 @@ def delete_book(request, pk):
 
 
 from django.shortcuts import render
-from .forms import BookSearchForm
+from .forms import ExampleForm
 from .models import Book
 
 def secure_book_search(request):
@@ -30,12 +30,12 @@ def secure_book_search(request):
     results = None
 
     if request.method == "POST":
-        form = BookSearchForm(request.POST)
+        form = ExampleForm(request.POST)
         if form.is_valid():
             q = form.cleaned_data["query"]
             results = Book.objects.select_related("author").filter(title__icontains=q)
     else:
-        form = BookSearchForm()
+        form = ExampleForm()
 
     return render(request, "bookshelf/book_search.html", {"form": form, "results": results})
 
