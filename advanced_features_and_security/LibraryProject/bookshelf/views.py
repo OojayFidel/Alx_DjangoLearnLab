@@ -17,3 +17,26 @@ def edit_book(request, pk):
 def delete_book(request, pk):
     return render(request, "bookshelf/delete_book.html")
 
+
+from django.shortcuts import render
+from .forms import BookSearchForm
+from .models import Book
+
+def secure_book_search(request):
+    """
+    Uses Django Forms for input validation and Django ORM for parameterized queries.
+    Prevents SQL injection by avoiding raw SQL and string formatting in queries.
+    """
+    results = None
+
+    if request.method == "POST":
+        form = BookSearchForm(request.POST)
+        if form.is_valid():
+            q = form.cleaned_data["query"]
+            results = Book.objects.select_related("author").filter(title__icontains=q)
+    else:
+        form = BookSearchForm()
+
+    return render(request, "bookshelf/book_search.html", {"form": form, "results": results})
+
+

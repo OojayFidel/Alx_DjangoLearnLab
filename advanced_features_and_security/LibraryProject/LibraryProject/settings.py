@@ -25,6 +25,28 @@ SECRET_KEY = 'django-insecure-d7pk=t$rh5w5c=#!!#f+x_*&(!k#t2h(9zle^m_id-^8l+oj*@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# ---------------- SECURITY BEST PRACTICES ----------------
+# In production, always set DEBUG = False
+# Keep DEBUG True for local development; toggle using environment variables in real apps.
+# DEBUG = False
+
+# Browser security headers
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = "DENY"
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# HTTPS-only cookies (set True in production with HTTPS)
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
+# Recommended cookie hardening
+CSRF_COOKIE_HTTPONLY = True
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_SAMESITE = "Lax"
+# --------------------------------------------------------
+
+
 ALLOWED_HOSTS = []
 
 
@@ -49,6 +71,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    'bookshelf.middleware.ContentSecurityPolicyMiddleware',
 ]
 
 ROOT_URLCONF = 'LibraryProject.urls'

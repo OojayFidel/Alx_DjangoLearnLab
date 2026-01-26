@@ -1,0 +1,18 @@
+<h1>Search Books</h1>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Search</button>
+</form>
+
+{% if results is not None %}
+  <h2>Results</h2>
+  <ul>
+    {% for book in results %}
+      <li>{{ book.title }} - {{ book.author.name }}</li>
+    {% empty %}
+      <li>No matches found</li>
+    {% endfor %}
+  </ul>
+{% endif %}
