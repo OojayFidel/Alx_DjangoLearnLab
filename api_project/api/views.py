@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from rest_framework import viewsets
 
 # Set up a view that uses the serializer to retrieve and return book data.
 
@@ -12,7 +13,6 @@ class BookList(generics.ListAPIView):
     serializer_class = BookSerializer
     permission_classes = [IsAuthenticated]
 
-from rest_framework import viewsets
 
 class BookViewSet(viewsets.ModelViewSet):
     queryset = Book.objects.all()
