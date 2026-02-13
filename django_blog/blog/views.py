@@ -84,25 +84,27 @@ from django.views.generic import UpdateView, DeleteView
 from django.urls import reverse
 
 # Add Comment
+from django.views.generic import CreateView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse
+from .models import Comment, Post
 from .forms import CommentForm
-from .models import Post, Comment
 
-def add_comment(request, pk):
-    post = get_object_or_404(Post, pk=pk)
 
-    if request.method == "POST":
-        if not request.user.is_authenticated:
-            return redirect("login")
+class CommentCreateView(LoginRequiredMixin, CreateView):
+    model = Comment
+    form_class = CommentForm
+    template_name = "blog/comment_form.html"
 
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            comment = form.save(commit=False)
-            comment.post = post
-            comment.author = request.user
-            comment.save()
-            return redirect("post-detail", pk=post.pk)
+    def form_valid(self, form):
+        post = Post.objects.get(pk=self.kwargs["pk"])
+        form.instance.post = post
+        form.instance.author = self.request.user
+        return super().form_valid(form)
 
-    return redirect("post-detail", pk=post.pk)
+    def get_success_url(self):
+        return reverse("post-detail", kwargs={"pk": self.kwargs["pk"]})
+
 
 # Edit Comment (class-based)
 class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
