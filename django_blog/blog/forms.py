@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from taggit.forms import TagWidget
 
 class RegisterForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -19,11 +20,12 @@ from django import forms
 from .models import Post, Tag
 
 class PostForm(forms.ModelForm):
-    tags = forms.CharField(required=False, help_text="Comma-separated tags (e.g., food, spicy, friday)")
-
     class Meta:
         model = Post
         fields = ["title", "content", "tags"]
+        widgets = {
+            "tags": TagWidget(),
+        }
 
     def save(self, commit=True):
         post = super().save(commit=False)
