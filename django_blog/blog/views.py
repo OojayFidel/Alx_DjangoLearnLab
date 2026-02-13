@@ -77,3 +77,54 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def test_func(self):
         post = self.get_object()
         return post.author == self.request.user
+
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.views.generic import UpdateView, DeleteView
+from django.urls import reverse
+
+# Add Comment
+from .forms import CommentForm
+from .models import Post, Comment
+
+def add_comment(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+
+    if request.method == "POST":
+        if not request.user.is_authenticated:
+            return redirect("login")
+
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.author = request.user
+            comment.save()
+            return redirect("post-detail", pk=post.pk)
+
+    return redirect("post-detail", pk=post.pk)
+
+# Edit Comment (class-based)
+class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Comment
+    fields = ["content"]
+    template_name = "blog/comment_form.html"
+
+    def get_success_url(self):
+        return reverse("post-detail", kwargs={"pk": self.object.post.pk})
+
+    def test_func(self):
+        comment = self.get_object()
+        return comment.author == self.request.user
+
+# Delete Comment (class-based)
+class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Comment
+    template_name = "blog/comment_confirm_delete.html"
+
+    def get_success_url(self):
+        return reverse("post-detail", kwargs={"pk": self.object.post.pk})
+
+    def test_func(self):
+        comment = self.get_object()
+        return comment.author == self.request.user

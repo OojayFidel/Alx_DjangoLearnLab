@@ -91,3 +91,69 @@ This project implements full CRUD (Create, Read, Update, Delete) functionality f
 
 ---
 
+
+## Comment Functionality for Blog Posts
+
+This project implements a comment system to improve interactivity on blog posts. Users can read comments under each post, authenticated users can add new comments, and comment authors can edit or delete their own comments.
+
+### Features Implemented
+
+- Display all comments related to a specific blog post
+- Authenticated users can add comments from the post detail page
+- Comment authors can update (edit) their own comments
+- Comment authors can delete their own comments
+- Permissions are enforced to prevent unauthorized edits/deletes
+
+---
+
+### Comment Model
+
+The comment system is built using a `Comment` model with the following fields:
+
+- `post` (ForeignKey): Links each comment to a specific `Post` (many comments to one post)
+- `author` (ForeignKey): Links each comment to the Django `User` model
+- `content` (TextField): The body of the comment
+- `created_at` (DateTimeField): Timestamp when the comment was created
+- `updated_at` (DateTimeField): Timestamp when the comment was last updated
+
+---
+
+### URL Routes
+
+| Route | Description | Access |
+|-------|------------|--------|
+| `/post/<int:pk>/` | View a post and its comments | Public |
+| `/post/<int:pk>/comment/new/` | Add a new comment to a post | Authenticated users only |
+| `/comment/<int:pk>/update/` | Edit a comment | Comment author only |
+| `/comment/<int:pk>/delete/` | Delete a comment | Comment author only |
+
+---
+
+### Permissions and Access Control
+
+- Anyone can view posts and their comments.
+- Only authenticated users can add comments.
+- Only the comment author can edit or delete their comment.
+- Unauthorized users attempting to modify another user’s comment will be blocked (403).
+
+---
+
+### Security Implementation
+
+- All POST forms use CSRF protection (`{% csrf_token %}`).
+- Comment authorship is automatically assigned to the logged-in user.
+- Django authentication and session management are used for secure access control.
+
+---
+
+### Testing Instructions
+
+1. Open a post detail page (e.g., `/post/1/`) and confirm comments are displayed.
+2. While logged out, attempt to add a comment — you should be redirected to login.
+3. Log in and submit a comment — confirm it appears under the post.
+4. Edit your own comment — confirm the update is saved.
+5. Log in as another user and try to edit/delete a comment you do not own — access should be denied.
+6. Delete your own comment — confirm it is removed from the post detail page.
+
+---
+
