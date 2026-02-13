@@ -1,0 +1,11 @@
+<h1>Search Results</h1>
+
+<p>Query: "{{ query }}"</p>
+
+{% for post in posts %}
+  <h2><a href="{% url 'post-detail' post.pk %}">{{ post.title }}</a></h2>
+  <p>{{ post.published_date }} • {{ post.author.username }}</p>
+  <hr>
+{% empty %}
+  <p>No matching posts found.</p>
+{% endfor %}

@@ -157,3 +157,81 @@ The comment system is built using a `Comment` model with the following fields:
 
 ---
 
+
+## Advanced Features: Tagging and Search
+
+This project includes tagging and search functionality to improve content organization and make posts easier to discover. Users can assign multiple tags to a post and search posts by title, content, or tag names.
+
+### Features Implemented
+
+- Tag model created to store reusable tags
+- Many-to-Many relationship between `Post` and `Tag`
+- Posts can have multiple tags, and tags can belong to multiple posts
+- Tag field supports creating new tags that don’t already exist
+- Search supports queries across:
+  - post title
+  - post content
+  - tag names
+- Tag names are displayed on posts and are clickable to filter posts by tag
+
+---
+
+### Tagging System
+
+#### Tag Model
+Tags are stored using a `Tag` model with a unique `name` field. A Many-to-Many relationship is established between `Post` and `Tag` to support multiple tags per post.
+
+#### Adding Tags to Posts
+The `PostForm` includes a `tags` input field that accepts **comma-separated values** (e.g., `food, spicy, friday`). During save:
+- each tag name is cleaned and split
+- existing tags are reused
+- new tags are created automatically if they do not exist
+- selected tags are linked to the post
+
+---
+
+### Search Functionality
+
+A search endpoint allows users to search for posts using a query parameter. The search checks for matches in:
+- `title` (case-insensitive)
+- `content` (case-insensitive)
+- `tags__name` (case-insensitive)
+
+The results are displayed on a dedicated search results page.
+
+---
+
+### URL Routes
+
+| Route | Description | Access |
+|------|-------------|--------|
+| `/search/` | Search posts by title/content/tags using `?q=` | Public |
+| `/tags/<tag_name>/` | View all posts with a specific tag | Public |
+
+---
+
+### Template Updates
+
+- A search bar is included in the post listing template to submit queries to `/search/`.
+- Tags are displayed on post list and post detail pages.
+- Each tag is linked to a filtered view that shows only posts containing that tag.
+- Dedicated pages exist for:
+  - tag-filtered posts
+  - search results
+
+---
+
+### Testing Instructions
+
+1. Create or edit a post and add tags using comma-separated values (e.g., `food, spicy, friday`).
+2. Open the post detail page and confirm tags display correctly.
+3. Click a tag and confirm it opens the filtered tag page (`/tags/<tag_name>/`).
+4. Use the search bar to search a keyword found in:
+   - a title
+   - a content body
+   - a tag name  
+   Confirm matching posts appear on `/search/`.
+5. Confirm searching a non-existing term returns “No matching posts found.”
+
+---
+

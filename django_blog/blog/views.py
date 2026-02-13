@@ -11,6 +11,10 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from .models import Post
+from .forms import PostForm
+from django.db.models import Q
+from .models import Post, Tag
+
 
 
 
@@ -59,10 +63,16 @@ class PostCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
+
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
     form_class = PostForm
     template_name = "blog/post_form.html"
+
+    def get_initial(self):
+        initial = super().get_initial()
+        initial["tags"] = ", ".join(self.object.tags.values_list("name", flat=True))
+        return initial
 
     def test_func(self):
         post = self.get_object()
@@ -130,3 +140,21 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def test_func(self):
         comment = self.get_object()
         return comment.author == self.request.user
+
+def search_view(request):
+    query = request.GET.get("q", "")
+    posts = Post.objects.all()
+
+    if query:
+        posts = posts.filter(
+            Q(title__icontains=query) |
+            Q(content__icontains=query) |
+            Q(tags__name__icontains=query)
+        ).distinct()
+
+    return render(request, "blog/search_results.html", {"posts": posts, "query": query})
+
+def tag_posts_view(request, tag_name):
+    tag = Tag.objects.get(name=tag_name)
+    posts = tag.posts.all().order_by("-published_date")
+    return render(request, "blog/tag_posts.html", {"tag": tag, "posts": posts})

@@ -2,6 +2,12 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
 
+class Tag(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.name
+
 class Post(models.Model):
     title = models.CharField(max_length=200)
     content = models.TextField()
@@ -10,6 +16,8 @@ class Post(models.Model):
         User,
         on_delete=models.CASCADE
     )
+
+    tags = models.ManyToManyField(Tag, blank=True, related_name="posts")
 
     def get_absolute_url(self):
         return reverse("post-detail", kwargs={"pk": self.pk})
