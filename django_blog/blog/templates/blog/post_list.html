@@ -1,0 +1,13 @@
+<h1>All Posts</h1>
+
+{% if user.is_authenticated %}
+  <p><a href="{% url 'post-create' %}">Create New Post</a></p>
+{% endif %}
+
+{% for post in posts %}
+  <h2><a href="{% url 'post-detail' post.pk %}">{{ post.title }}</a></h2>
+  <p>By {{ post.author.username }} | {{ post.published_date }}</p>
+  <hr>
+{% empty %}
+  <p>No posts yet.</p>
+{% endfor %}
