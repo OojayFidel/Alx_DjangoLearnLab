@@ -146,15 +146,13 @@ def search_view(request):
     posts = Post.objects.all()
 
     if query:
-        posts = posts.filter(
+        posts = Post.objects.filter(
             Q(title__icontains=query) |
             Q(content__icontains=query) |
             Q(tags__name__icontains=query)
         ).distinct()
 
-    return render(request, "blog/search_results.html", {"posts": posts, "query": query})
-
-def tag_posts_view(request, tag_name):
-    tag = Tag.objects.get(name=tag_name)
-    posts = tag.posts.all().order_by("-published_date")
-    return render(request, "blog/tag_posts.html", {"tag": tag, "posts": posts})
+    return render(request, "blog/search_results.html", {
+        "posts": posts,
+        "query": query
+    })
