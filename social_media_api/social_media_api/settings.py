@@ -196,3 +196,6 @@ if not DEBUG:
     SECURE_HSTS_PRELOAD = True
 else:
     SECURE_SSL_REDIRECT = False
+
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
