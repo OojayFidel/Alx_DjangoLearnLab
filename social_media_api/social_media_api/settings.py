@@ -182,3 +182,17 @@ X_FRAME_OPTIONS = "DENY"
 SECURE_BROWSER_XSS_FILTER = True  # some platforms ignore; ok to include
 CSRF_COOKIE_SECURE = not DEBUG
 SESSION_COOKIE_SECURE = not DEBUG
+
+
+# --- Security settings for production ---
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+
+    # HSTS (start small, then increase when confident)
+    SECURE_HSTS_SECONDS = 60  # 1 minute first deploy
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+else:
+    SECURE_SSL_REDIRECT = False
