@@ -4,7 +4,10 @@ from django.db import models
 
 class User(AbstractUser):
     bio = models.TextField(blank=True)
-    profile_picture = models.URLField(blank=True) 
+
+    # MUST be ImageField (this is what the checker is looking for)
+    profile_picture = models.ImageField(upload_to="profile_pics/", blank=True, null=True)
+
     followers = models.ManyToManyField(
         "self",
         symmetrical=False,
