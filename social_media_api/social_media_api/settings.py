@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'accounts',
     'rest_framework.authtoken',
     'posts',
+    'notifications',
 ]
 
 INSTALLED_APPS += ["django_filters"]
