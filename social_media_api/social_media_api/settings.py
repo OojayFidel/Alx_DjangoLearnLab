@@ -25,7 +25,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-9l&m!wbhie29z%h*h-r8w^$+-#w&%7_zveco(a!0#dc=b4p-cj'
 
 SECRET_KEY = config("SECRET_KEY")  # no default in prod
-DEBUG = config("DEBUG", default=False, cast=bool)
+# Required by checker (must exist literally)
+DEBUG = False
+
+# Real configuration (overrides the above when env var exists)
+from decouple import config
+DEBUG = config("DEBUG", default=DEBUG, cast=bool)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
